@@ -31,16 +31,75 @@ However, the remaining flip-flops should be made ready to toggle only when all l
 /* write all the steps invloved */
 
 **PROGRAM**
+```
+module exp11 (
+    input clk,    // Clock signal
+    input rst,    // Reset signal (active high)
+    output [3:0] q // 4-bit output
+);
 
-/* Program for flipflops and verify its truth table in quartus using Verilog programming. 
+    wire [3:0] j, k; // J and K inputs for each JK flip-flop
+    wire [3:0] t;    // Toggle signal for each flip-flop
 
-Developed by: RegisterNumber:
-*/
+    // Generate the toggle signals for each stage
+    assign j[0] = 1'b1; // First flip-flop toggles on every clock pulse
+    assign k[0] = 1'b1;
+    assign t[0] = q[0]; // Output of the first flip-flop
 
+    assign j[1] = q[0]; // Second flip-flop toggles on q[0] high
+    assign k[1] = q[0];
+    assign t[1] = q[1];
+
+    assign j[2] = q[0] & q[1]; // Third flip-flop toggles on q[1:0] high
+    assign k[2] = q[0] & q[1];
+    assign t[2] = q[2];
+
+    assign j[3] = q[0] & q[1] & q[2]; // Fourth flip-flop toggles on q[2:0] high
+    assign k[3] = q[0] & q[1] & q[2];
+    assign t[3] = q[3];
+
+    // Instantiate 4 JK flip-flops
+    jk_flipflop jk0 (.clk(clk), .rst(rst), .j(j[0]), .k(k[0]), .q(q[0]));
+    jk_flipflop jk1 (.clk(clk), .rst(rst), .j(j[1]), .k(k[1]), .q(q[1]));
+    jk_flipflop jk2 (.clk(clk), .rst(rst), .j(j[2]), .k(k[2]), .q(q[2]));
+    jk_flipflop jk3 (.clk(clk), .rst(rst), .j(j[3]), .k(k[3]), .q(q[3]));
+
+endmodule
+
+// JK flip-flop module
+module jk_flipflop (
+    input clk,    // Clock signal
+    input rst,    // Reset signal (active high)
+    input j,      // J input
+    input k,      // K input
+    output reg q  // Q output
+);
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            q <= 1'b0; // Reset output to 0
+        end else begin
+            case ({j, k})
+                2'b00: q <= q;       // No change
+                2'b01: q <= 1'b0;    // Reset
+                2'b10: q <= 1'b1;    // Set
+                2'b11: q <= ~q;      // Toggle
+            endcase
+        end
+    end
+endmodule 
+
+Developed by:Yasvanth RD
+RegisterNumber:24900517
+
+```
 **RTL LOGIC UP COUNTER**
+![396409936-7cc4337f-8ac1-45fb-aa7c-3c6016ec1165](https://github.com/user-attachments/assets/e8f5ab32-1c51-43f1-ba10-a1a849f64360)
 
 **TIMING DIAGRAM FOR IP COUNTER**
+![396410078-3b0db745-12c1-4a19-a4ce-e8bbe34f6e40](https://github.com/user-attachments/assets/c1f8e4f1-9c52-41df-941f-ef58063de6f7)
 
 **TRUTH TABLE**
+![396410954-4171cb45-c4b6-444d-b801-7162e0e6378f](https://github.com/user-attachments/assets/daa475ca-f6c1-4949-901d-7b12a0bf9016)
 
 **RESULTS**
+Thus the program executed successfully
